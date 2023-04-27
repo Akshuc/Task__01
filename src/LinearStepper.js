@@ -40,6 +40,7 @@ const BasicForm = () => {
       <Controller
         control={control}
         name="firstName"
+        type="text"
         rules={{ required: "this field is required." }}
         render={({ field }) => (
           <TextField
@@ -59,6 +60,7 @@ const BasicForm = () => {
       <Controller
         control={control}
         name="lastName"
+        type="text"
         rules={{ required: "this field is required." }}
         render={({ field }) => (
           <TextField
@@ -78,6 +80,7 @@ const BasicForm = () => {
       <Controller
         control={control}
         name="nickName"
+        type="text"
         rules={{ required: "this field is required." }}
         render={({ field }) => (
           <TextField
@@ -110,6 +113,7 @@ const ContactForm = () => {
         render={({ field }) => (
           <TextField
             id="email"
+            type="email"
             label="E-mail"
             variant="outlined"
             placeholder="Enter Your E-mail Address"
@@ -129,6 +133,7 @@ const ContactForm = () => {
         render={({ field }) => (
           <TextField
             id="phone-number"
+            type="number"
             label="Phone Number"
             variant="outlined"
             placeholder="Enter Your Phone Number"
@@ -147,6 +152,7 @@ const ContactForm = () => {
         render={({ field }) => (
           <TextField
             id="alternate-phone"
+            type="number"
             label="Alternate Phone"
             variant="outlined"
             placeholder="Enter Your Alternate Phone"
@@ -240,6 +246,7 @@ const PaymentForm = () => {
           <TextField
             id="cardNumber"
             label="Card Number"
+            type="number"
             variant="outlined"
             placeholder="Enter Your Card Number"
             fullWidth
@@ -253,6 +260,7 @@ const PaymentForm = () => {
       <Controller
         control={control}
         name="cardMonth"
+        type="date"
         rules={{ required: "this field is required." }}
         render={({ field }) => (
           <TextField
@@ -324,9 +332,11 @@ const LinaerStepper = () => {
       cardYear: ""
     }
   });
+
   const [activeStep, setActiveStep] = useState(0);
   const [skippedSteps, setSkippedSteps] = useState([]);
   const steps = getSteps();
+  let [newdata, setNewData] = useState([]);
   const isStepOptional = (step) => {
     return step === 1 || step === 2;
   };
@@ -338,12 +348,11 @@ const LinaerStepper = () => {
   };
 
   const handleNext = (data) => {
-    console.log(data);
     if (activeStep == steps.length - 1) {
       fetch("https://jsonplaceholder.typicode.com/comments")
         .then((data) => data.json())
         .then((res) => {
-          console.log(res);
+          newdata.push(data);
           setActiveStep(activeStep + 1);
         });
     } else {
@@ -365,8 +374,8 @@ const LinaerStepper = () => {
     setActiveStep(activeStep + 1);
   };
 
-  // const onSubmit = (data) => {
-  //   console.log(data);
+  // const onSubmit = () => {
+  //   console.log(newData);
   // };
   return (
     <div>
@@ -400,9 +409,30 @@ const LinaerStepper = () => {
       </Stepper>
 
       {activeStep === steps.length ? (
-        <Typography variant="h3" align="center">
-          Thank You
-        </Typography>
+        // <Typography hieght="200px" width="300px">
+        //   {newdata.firstName}
+        // </Typography>
+        newdata.map((elem, index) => {
+          return (
+            <div key={index}>
+              <h2>Submitted Response sucessfully</h2>
+              <h3>Here is the list What we have recieved from you</h3>
+              <li>{elem.firstName}</li>
+              <li>{elem.lastName}</li>
+              <li>{elem.nickName}</li>
+              <li>{elem.emailAddress}</li>
+              <li>{elem.phoneNumber}</li>
+              <li>{elem.alternatePhone}</li>
+              <li>{elem.address1}</li>
+              <li>{elem.address2}</li>
+              <li>{elem.country}</li>
+              <li>{elem.cardNumber}</li>
+              <li>{elem.cardMonth}</li>
+              <li>{elem.cardYear}</li>
+              
+            </div>
+          );
+        })
       ) : (
         <>
           <FormProvider {...methods}>
@@ -431,6 +461,7 @@ const LinaerStepper = () => {
                 variant="contained"
                 color="primary"
                 // onClick={handleNext}
+                onClick={() => console.log(newdata)}
                 type="submit"
               >
                 {activeStep === steps.length - 1 ? "Finish" : "Next"}
